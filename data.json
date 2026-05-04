@@ -1,0 +1,128 @@
+[
+  {
+    "name": "EOS R6 Mark II",
+    "brand": "Canon",
+    "category": "Systemkameras",
+    "price": 2499.00,
+    "sales_30_days": 45,
+    "specs": { "sensor": "Vollformat", "resolution": "24.2 MP", "mount": "RF-Mount" },
+    "rating_avg": 4.9,
+    "stock": 12,
+    "reviews": [
+      { "user": "Lichtblick_Foto", "rating": 5, "comment": "Hervorragender Autofokus!" },
+      { "user": "StudioPro", "rating": 5, "comment": "Die beste Allround-Kamera, die ich je hatte." }
+    ]
+  },
+  {
+    "name": "Z9 Professional",
+    "brand": "Nikon",
+    "category": "Systemkameras",
+    "price": 5999.00,
+    "sales_30_days": 12,
+    "specs": { "sensor": "Vollformat", "resolution": "45.7 MP", "video": "8K" },
+    "rating_avg": 5.0,
+    "stock": 3,
+    "reviews": [
+      { "user": "WildLife_Expedition", "rating": 5, "comment": "Unzerstörbar und rasend schnell." }
+    ]
+  },
+  {
+    "name": "Alpha 7 IV",
+    "brand": "Sony",
+    "category": "Systemkameras",
+    "price": 2399.00,
+    "sales_30_days": 89,
+    "specs": { "sensor": "Vollformat", "resolution": "33 MP", "af_points": 759 },
+    "rating_avg": 4.8,
+    "stock": 25,
+    "reviews": [
+      { "user": "VlogMaster", "rating": 4, "comment": "Tolle Video-Features, Menüführung etwas gewöhnungsbedürftig." },
+      { "user": "PixelPerfekt", "rating": 5, "comment": "Scharf, schärfer, Sony." }
+    ]
+  },
+  {
+    "name": "X-T5",
+    "brand": "Fujifilm",
+    "category": "Systemkameras",
+    "price": 1699.00,
+    "sales_30_days": 67,
+    "specs": { "sensor": "APS-C", "resolution": "40.2 MP", "style": "Retro" },
+    "rating_avg": 4.7,
+    "stock": 18,
+    "reviews": []
+  },
+  {
+    "name": "Hero 12 Black",
+    "brand": "GoPro",
+    "category": "Action-Kameras",
+    "price": 399.00,
+    "sales_30_days": 156,
+    "specs": { "waterproof": "10m", "video": "5.3K", "stabilization": "Hypersmooth 6.0" },
+    "rating_avg": 4.6,
+    "stock": 50,
+    "reviews": [
+      { "user": "BikeRider", "rating": 4, "comment": "Stabilisierung ist Top, Akku bei Kälte etwas schwach." }
+    ]
+  },
+  {
+    "name": "Mavic 3 Pro",
+    "brand": "DJI",
+    "category": "Drohnen",
+    "price": 2099.00,
+    "sales_30_days": 34,
+    "specs": { "camera": "Hasselblad", "flight_time": "43 min", "range": "15km" },
+    "rating_avg": 4.9,
+    "stock": 7,
+    "reviews": []
+  },
+  {
+    "name": "24-70mm f/2.8 DG DN",
+    "brand": "Sigma",
+    "category": "Objektive",
+    "price": 1199.00,
+    "sales_30_days": 42,
+    "specs": { "type": "Zoom", "aperture": "f/2.8", "mount": "E-Mount" },
+    "rating_avg": 4.8,
+    "stock": 15,
+    "reviews": [
+      { "user": "WeddingShooter", "rating": 5, "comment": "Preis-Leistung unschlagbar gegenüber den Originalen." }
+    ]
+  },
+  {
+    "name": "50mm f/1.2 GM",
+    "brand": "Sony",
+    "category": "Objektive",
+    "price": 2299.00,
+    "sales_30_days": 18,
+    "specs": { "type": "Festbrennweite", "aperture": "f/1.2", "series": "G-Master" },
+    "rating_avg": 5.0,
+    "stock": 5,
+    "reviews": [
+      { "user": "BokehLover", "rating": 5, "comment": "Das Bokeh ist wie Butter!" }
+    ]
+  },
+  {
+    "name": "Traveler Carbon Stativ",
+    "brand": "Gitzo",
+    "category": "Zubehör",
+    "price": 749.00,
+    "sales_30_days": 21,
+    "specs": { "material": "Carbon", "weight": "1.29kg", "load_capacity": "10kg" },
+    "rating_avg": 4.7,
+    "stock": 10,
+    "reviews": []
+  },
+  {
+    "name": "ProGrade SD 128GB",
+    "brand": "SanDisk",
+    "category": "Zubehör",
+    "price": 59.00,
+    "sales_30_days": 312,
+    "specs": { "capacity": "128GB", "speed": "V90", "type": "SDXC" },
+    "rating_avg": 4.5,
+    "stock": 100,
+    "reviews": [
+      { "user": "VideoPro", "rating": 5, "comment": "Keine Probleme bei 4K-RAW Aufnahmen." }
+    ]
+  }
+]
