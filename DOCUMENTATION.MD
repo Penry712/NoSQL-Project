@@ -1,4 +1,4 @@
-# Datum: 04.05.2026 1. Doppelstunden
+# Datum: 04.05.2026 1. Doppelstunde
 
 - Informationen zu NoSQL und MongoDB gesammelt
 - Planung der Einträge für das Kamera-Sortiment abgeschlossen
@@ -13,4 +13,10 @@
 - Ergebnis zur Validierung der eingebetteten Bewertungsstruktur genutzt
 
 - Prompt: "Erstelle mindestens 10 Beispieldatensätze"
-- Ergebnis zur Ersparung von Produktinformationen Sammeln.
+- Ergebnis zur Ersparung von Zeit für Produktinformationen .
+
+# Datum: 04.05.2026 2. Doppelstunde
+
+- Verbindung der Datenbank-Collection mit Python
+- Testaufruf der Daten
+- Tutorial zur Erstellung einer REST-API in Python angeguckt
