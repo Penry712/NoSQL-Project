@@ -20,3 +20,10 @@
 - Verbindung der Datenbank-Collection mit Python
 - Testaufruf der Daten
 - Tutorial zur Erstellung einer REST-API in Python angeguckt
+
+# Datum: 05.05.2026 3. Doppelstunde
+
+- Erstellung der REST-API mit hilfe von FastAPI und Uvicorn
+- SwaggerUI durch FastAPI erstellt
+- Testen der CRUD Operation
+- 
