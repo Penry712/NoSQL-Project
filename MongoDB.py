@@ -3,4 +3,4 @@ from pymongo import MongoClient
 client = MongoClient("mongodb://localhost:27017/")
 
 db = client["NoSQL-Project"]
-onlineshop = db["OnlineShop"]
+collection = db["OnlineShop"]

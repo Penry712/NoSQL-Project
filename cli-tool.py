@@ -6,9 +6,9 @@ BASE_URL = "http://localhost:8000/api/onlineshop"
 
 def request(method, path="", data=None, params=None):
     try:
-        resp = requests.request(method, BASE_URL + path, json=data, params=params, timeout=10)
-        resp.raise_for_status()
-        return resp.json() if resp.content else None
+        request = requests.request(method, BASE_URL + path, json=data, params=params, timeout=10)
+        request.raise_for_status()
+        return request.json() if request.content else None
     except requests.HTTPError as e:
         print(f"Fehler {e.response.status_code}: {e.response.text}")
     except requests.RequestException as e:
@@ -16,8 +16,8 @@ def request(method, path="", data=None, params=None):
     return None
 
 
-def _print_product_line(p):
-    print(f"- [{p['_id']}] {p['name']} ({p['brand']}) - {p['price']} EUR | Stock: {p['stock']} | Sales 30d: {p.get('sales_30_days', 0)}")
+def _print_product_line(product):
+    print(f"- [{product['_id']}] {product['name']} ({product['brand']}) - {product['price']} EUR | Stock: {product['stock']} | Sales 30d: {product.get('sales_30_days', 0)}")
 
 
 def list_products():
@@ -25,15 +25,15 @@ def list_products():
     if not products:
         print("Keine Produkte gefunden.")
         return
-    for p in products:
-        _print_product_line(p)
+    for product in products:
+        _print_product_line(product)
 
 
 def get_product():
-    pid = input("Produkt-ID: ").strip()
-    p = request("GET", f"/{pid}")
-    if p:
-        print(json.dumps(p, indent=2, ensure_ascii=False))
+    productID = input("Produkt-ID: ").strip()
+    product = request("GET", f"/{productID}")
+    if product:
+        print(json.dumps(product, indent=2, ensure_ascii=False))
 
 
 def _read_product():
@@ -48,43 +48,43 @@ def _read_product():
 
 
 def create_product():
-    res = request("POST", "/", _read_product())
-    if res:
-        print(f"Angelegt mit ID: {res['id']}")
+    api_request = request("POST", "/", _read_product())
+    if api_request:
+        print(f"Angelegt mit ID: {api_request['id']}")
 
 
 def update_product():
-    pid = input("Produkt-ID: ").strip()
-    res = request("PUT", f"/{pid}", _read_product())
-    if res:
+    productID = input("Produkt-ID: ").strip()
+    api_request = request("PUT", f"/{productID}", _read_product())
+    if api_request:
         print("Aktualisiert.")
 
 
 def delete_product():
-    pid = input("Produkt-ID: ").strip()
+    productID = input("Produkt-ID: ").strip()
     if input("Wirklich loeschen? (j/N): ").lower() == "j":
-        request("DELETE", f"/{pid}")
+        request("DELETE", f"/{productID}")
         print("Geloescht.")
 
 
 def add_review():
-    pid = input("Produkt-ID: ").strip()
+    productID = input("Produkt-ID: ").strip()
     review = {
         "user":    input("Benutzer: ").strip(),
         "rating":  int(input("Rating (1-5): ")),
         "comment": input("Kommentar: ").strip(),
     }
-    res = request("POST", f"/{pid}/reviews", review)
-    if res:
+    api_request = request("POST", f"/{productID}/reviews", review)
+    if api_request:
         print("Review hinzugefuegt.")
 
 
 def list_reviews():
-    pid = input("Produkt-ID: ").strip()
-    p = request("GET", f"/{pid}")
-    if not p:
+    productID = input("Produkt-ID: ").strip()
+    product = request("GET", f"/{productID}")
+    if not product:
         return
-    reviews = p.get("reviews", [])
+    reviews = product.get("reviews", [])
     if not reviews:
         print("Keine Reviews vorhanden.")
         return
@@ -95,8 +95,8 @@ def list_reviews():
 
 
 def top_sellers():
-    raw = input("Anzahl (Default 5): ").strip()
-    limit = int(raw) if raw else 5
+    many = input("Anzahl (Default 5): ").strip()
+    limit = int(many) if many else 5
     products = request("GET", "/stats/top-sellers", params={"limit": limit})
     if not products:
         print("Keine Daten.")
