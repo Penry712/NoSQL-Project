@@ -26,4 +26,6 @@
 - Erstellung der REST-API mit hilfe von FastAPI und Uvicorn
 - SwaggerUI durch FastAPI erstellt
 - Testen der CRUD Operation
-- 
+
+# Datum 06.05.2026 4. Doppelstunde
+- Erstellung des CLI Menüs

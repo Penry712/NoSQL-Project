@@ -3,137 +3,157 @@ import requests
 
 BASE_URL = "http://localhost:8000/api/onlineshop"
 
-
-def request(method, path="", data=None, params=None):
+def mache_request(method, path="", data=None, params=None):
     try:
-        request = requests.request(method, BASE_URL + path, json=data, params=params, timeout=10)
-        request.raise_for_status()
-        return request.json() if request.content else None
-    except requests.HTTPError as e:
-        print(f"Fehler {e.response.status_code}: {e.response.text}")
-    except requests.RequestException as e:
-        print(f"Verbindungsfehler: {e}")
-    return None
+        if method == "GET":
+            req = requests.get(BASE_URL + path, params=params)
+        elif method == "POST":
+            req = requests.post(BASE_URL + path, json=data)
+        elif method == "PUT":
+            req = requests.put(BASE_URL + path, json=data)
+        elif method == "DELETE":
+            req = requests.delete(BASE_URL + path)
+            
+        req.raise_for_status()
+        
+        if req.content:
+            return req.json()
+        return None
+    except Exception as e:
+        print(f"Fehler bei der Verbindung: {e}")
+        return None
 
-
-def _print_product_line(product):
-    print(f"- [{product['_id']}] {product['name']} ({product['brand']}) - {product['price']} EUR | Stock: {product['stock']} | Sales 30d: {product.get('sales_30_days', 0)}")
-
+def zeige_produkt_zeile(product):
+    id = product['_id']
+    name = product['name']
+    marke = product['brand']
+    preis = product['price']
+    print(f"- [{id}] {name} ({marke}) - {preis} EUR | Bestand: {product['stock']}")
 
 def list_products():
-    products = request("GET", "/")
-    if not products:
+    produkte = mache_request("GET", "/")
+    if produkte == None or len(produkte) == 0:
         print("Keine Produkte gefunden.")
-        return
-    for product in products:
-        _print_product_line(product)
-
+    else:
+        for p in produkte:
+            zeige_produkt_zeile(p)
 
 def get_product():
-    productID = input("Produkt-ID: ").strip()
-    product = request("GET", f"/{productID}")
-    if product:
-        print(json.dumps(product, indent=2, ensure_ascii=False))
-
-
-def _read_product():
-    return {
-        "name":       input("Name: ").strip(),
-        "brand":      input("Brand: ").strip(),
-        "category":   input("Kategorie: ").strip(),
-        "price":      float(input("Preis: ")),
-        "stock":      int(input("Stock: ") or 0),
-        "rating_avg": float(input("Rating (0-5): ") or 0),
-    }
-
+    productID = input("Produkt-ID eingeben: ")
+    produkt = mache_request("GET", f"/{productID}")
+    if produkt:
+        print(json.dumps(produkt, indent=2))
 
 def create_product():
-    api_request = request("POST", "/", _read_product())
-    if api_request:
-        print(f"Angelegt mit ID: {api_request['id']}")
+    neues_produkt = {}
+    neues_produkt["name"] = input("Name: ")
+    neues_produkt["brand"] = input("Brand: ")
+    neues_produkt["category"] = input("Kategorie: ")
+    neues_produkt["price"] = float(input("Preis: "))
+    neues_produkt["stock"] = int(input("Stock: ") or 0)
+    neues_produkt["rating_avg"] = float(input("Rating (0-5): ") or 0)
 
+    antwort = mache_request("POST", "/", data=neues_produkt)
+    if antwort:
+        print(f"Erfolgreich angelegt mit ID: {antwort['id']}")
 
 def update_product():
-    productID = input("Produkt-ID: ").strip()
-    api_request = request("PUT", f"/{productID}", _read_product())
-    if api_request:
-        print("Aktualisiert.")
+    productID = input("Produkt-ID eingeben: ")
+    
+    update_daten = {}
+    update_daten["name"] = input("Neuer Name: ")
+    update_daten["brand"] = input("Neue Brand: ")
+    update_daten["category"] = input("Neue Kategorie: ")
+    update_daten["price"] = float(input("Neuer Preis: "))
+    update_daten["stock"] = int(input("Neuer Stock: ") or 0)
+    update_daten["rating_avg"] = float(input("Neues Rating (0-5): ") or 0)
 
+    antwort = mache_request("PUT", f"/{productID}", data=update_daten)
+    if antwort:
+        print("Produkt wurde aktualisiert.")
 
 def delete_product():
-    productID = input("Produkt-ID: ").strip()
-    if input("Wirklich loeschen? (j/N): ").lower() == "j":
-        request("DELETE", f"/{productID}")
-        print("Geloescht.")
-
+    productID = input("Produkt-ID eingeben: ")
+    bestaetigung = input("Wirklich loeschen? (j/n): ")
+    if bestaetigung == "j":
+        mache_request("DELETE", f"/{productID}")
+        print("Erfolgreich geloescht.")
 
 def add_review():
-    productID = input("Produkt-ID: ").strip()
+    productID = input("Produkt-ID eingeben: ")
     review = {
-        "user":    input("Benutzer: ").strip(),
-        "rating":  int(input("Rating (1-5): ")),
-        "comment": input("Kommentar: ").strip(),
+        "user": input("Benutzername: "),
+        "rating": int(input("Rating (1-5): ")),
+        "comment": input("Kommentar: ")
     }
-    api_request = request("POST", f"/{productID}/reviews", review)
-    if api_request:
-        print("Review hinzugefuegt.")
-
+    antwort = mache_request("POST", f"/{productID}/reviews", data=review)
+    if antwort:
+        print("Review wurde hinzugefuegt.")
 
 def list_reviews():
-    productID = input("Produkt-ID: ").strip()
-    product = request("GET", f"/{productID}")
-    if not product:
-        return
-    reviews = product.get("reviews", [])
-    if not reviews:
-        print("Keine Reviews vorhanden.")
-        return
-    print(f"\n{len(reviews)} Review(s) fuer '{product['name']}':")
-    for r in reviews:
-        stars = "*" * r["rating"] + "-" * (5 - r["rating"])
-        print(f"  [{stars}] {r['user']}: {r['comment']}")
-
+    productID = input("Produkt-ID eingeben: ")
+    produkt = mache_request("GET", f"/{productID}")
+    
+    if produkt:
+        reviews = produkt.get("reviews", [])
+        if len(reviews) == 0:
+            print("Dieses Produkt hat noch keine Reviews.")
+        else:
+            print(f"\nReviews fuer '{produkt['name']}':")
+            for r in reviews:
+                sterne = "*" * r["rating"]
+                print(f"  [{sterne}] {r['user']}: {r['comment']}")
 
 def top_sellers():
-    many = input("Anzahl (Default 5): ").strip()
-    limit = int(many) if many else 5
-    products = request("GET", "/stats/top-sellers", params={"limit": limit})
-    if not products:
-        print("Keine Daten.")
-        return
-    print(f"\n--- Top {len(products)} Seller (30 Tage) ---")
-    for i, p in enumerate(products, 1):
-        print(f"{i}. {p['name']} ({p['brand']}) - {p.get('sales_30_days', 0)} verkauft | {p['price']} EUR")
-
+    limit_input = input("Wie viele anzeigen? (Standard 5): ")
+    limit = int(limit_input) if limit_input else 5
+    
+    produkte = mache_request("GET", "/stats/top-sellers", params={"limit": limit})
+    if produkte:
+        print(f"\n--- Top {len(produkte)} Seller ---")
+        platz = 1
+        for p in produkte:
+            verkauft = p.get('sales_30_days', 0)
+            print(f"{platz}. {p['name']} ({p['brand']}) - {verkauft} mal verkauft")
+            platz += 1
 
 def menu():
-    actions = {
-        "1": ("Alle Produkte auflisten",    list_products),
-        "2": ("Einzelnes Produkt anzeigen", get_product),
-        "3": ("Produkt anlegen",            create_product),
-        "4": ("Produkt aktualisieren",      update_product),
-        "5": ("Produkt loeschen",           delete_product),
-        "6": ("Review hinzufuegen",         add_review),
-        "7": ("Reviews zu Produkt anzeigen",list_reviews),
-        "8": ("Top-Seller anzeigen",        top_sellers),
-        "0": ("Beenden",                    None),
-    }
+    # Klassisches Anfänger-Menü mit while-Schleife und if/elif
     while True:
-        print("\n--- OnlineShop CLI ---")
-        for k, (label, _) in actions.items():
-            print(f"  {k}) {label}")
-        choice = input("Auswahl: ").strip()
-        if choice == "0":
+        print("\n=== OnlineShop CLI ===")
+        print("1) Alle Produkte auflisten")
+        print("2) Einzelnes Produkt anzeigen")
+        print("3) Produkt anlegen")
+        print("4) Produkt aktualisieren")
+        print("5) Produkt loeschen")
+        print("6) Review hinzufuegen")
+        print("7) Reviews zu Produkt anzeigen")
+        print("8) Top-Seller anzeigen")
+        print("0) Beenden")
+        
+        auswahl = input("Bitte Nummer auswaehlen: ")
+        
+        if auswahl == "1":
+            list_products()
+        elif auswahl == "2":
+            get_product()
+        elif auswahl == "3":
+            create_product()
+        elif auswahl == "4":
+            update_product()
+        elif auswahl == "5":
+            delete_product()
+        elif auswahl == "6":
+            add_review()
+        elif auswahl == "7":
+            list_reviews()
+        elif auswahl == "8":
+            top_sellers()
+        elif auswahl == "0":
+            print("Programm wird beendet.")
             break
-        action = actions.get(choice)
-        if action and action[1]:
-            try:
-                action[1]()
-            except ValueError as e:
-                print(f"Ungueltige Eingabe: {e}")
         else:
-            print("Unbekannte Auswahl.")
-
+            print("Unbekannte Auswahl, bitte nochmal versuchen.")
 
 if __name__ == "__main__":
     menu()

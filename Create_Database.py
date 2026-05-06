@@ -1,72 +1,44 @@
-"""
-setup_db.py
-Erstellt (falls nicht vorhanden) die Datenbank 'NoSQL-Project' mit der
-Collection 'OnlineShop' und importiert die Daten aus 'data.json'.
-"""
-
 import json
 from pymongo import MongoClient
 
-# --- Konfiguration ---
-MONGO_URI = "mongodb://localhost:27017/"
-DB_NAME = "NoSQL-Project"
-COLLECTION_NAME = "OnlineShop"
-JSON_FILE = "data.json"
-
-
 def main():
     # 1. Verbindung herstellen
-    client = MongoClient(MONGO_URI)
-    print(f"✅ Verbunden mit {MONGO_URI}")
+    print("Verbinde mit lokaler MongoDB...")
+    client = MongoClient("mongodb://localhost:27017/")
+    
+    db = client["NoSQL-Project"]
+    collection = db["OnlineShop"]
 
-    # 2. Datenbank prüfen / anlegen
-    if DB_NAME in client.list_database_names():
-        print(f"ℹ️  Datenbank '{DB_NAME}' existiert bereits.")
-    else:
-        print(f"🆕 Datenbank '{DB_NAME}' wird beim ersten Insert erstellt.")
-    db = client[DB_NAME]
-
-    # 3. Collection prüfen / anlegen
-    if COLLECTION_NAME in db.list_collection_names():
-        print(f"ℹ️  Collection '{COLLECTION_NAME}' existiert bereits.")
-    else:
-        db.create_collection(COLLECTION_NAME)
-        print(f"🆕 Collection '{COLLECTION_NAME}' wurde erstellt.")
-    collection = db[COLLECTION_NAME]
-
-    # 4. JSON-Datei einlesen
+    # 2. JSON-Datei einlesen
+    print("Lese data.json ein...")
     try:
-        with open(JSON_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        datei = open("data.json", "r", encoding="utf-8")
+        daten = json.load(datei)
+        datei.close()
     except FileNotFoundError:
-        print(f"❌ Datei '{JSON_FILE}' nicht gefunden.")
+        print("Fehler: Datei 'data.json' wurde nicht gefunden.")
         return
 
-    if not isinstance(data, list):
-        data = [data]  # einzelnes Objekt in Liste packen
-    print(f"📄 {len(data)} Einträge aus '{JSON_FILE}' geladen.")
+    # 3. Einfügen der Daten mit Prüfung
+    neue_eintraege = 0
+    uebersprungen = 0
 
-    # 5. Doppelte Einträge vermeiden (anhand 'name')
-    new_items = []
-    for item in data:
-        if "name" in item and collection.find_one({"name": item["name"]}):
-            print(f"  ⏭️  Übersprungen (existiert): {item['name']}")
+    for item in daten:
+        # Prüfen ob das Produkt schon existiert
+        existiert_schon = collection.find_one({"name": item["name"]})
+        
+        if existiert_schon:
+            print(f"Uebersprungen: {item['name']} (gibt es schon)")
+            uebersprungen += 1
         else:
-            new_items.append(item)
+            collection.insert_one(item)
+            neue_eintraege += 1
 
-    # 6. Einfügen
-    if new_items:
-        result = collection.insert_many(new_items)
-        print(f"✅ {len(result.inserted_ids)} neue Dokumente eingefügt.")
-    else:
-        print("ℹ️  Keine neuen Dokumente zum Einfügen.")
-
-    # 7. Status
-    total = collection.count_documents({})
-    print(f"📦 Gesamt in '{DB_NAME}.{COLLECTION_NAME}': {total} Dokumente")
-
-    client.close()
-
+    # 4. Zusammenfassung
+    print("\n--- Zusammenfassung ---")
+    print(f"Neu eingefuegt: {neue_eintraege}")
+    print(f"Uebersprungen: {uebersprungen}")
+    print(f"Gesamt in der Datenbank: {collection.count_documents({})}")
 
 if __name__ == "__main__":
     main()
