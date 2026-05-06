@@ -5,8 +5,6 @@ from models import Product, Review
 
 app = FastAPI(title="NoSQL-Project", version="1.0.0")
 
-# Hilfsfunktion, um die MongoDB-ID in einen normalen String umzuwandeln,
-# da FastAPI sonst Fehler beim Anzeigen im Browser wirft.
 def serialize(dokument):
     dokument["_id"] = str(dokument["_id"])
     return dokument
@@ -17,7 +15,6 @@ def root():
 
 @app.get("/api/onlineshop")
 def list_products(category: str = None, brand: str = None):
-    # Einfache Suche aufbauen
     such_filter = {}
     if category != None: 
         such_filter["category"] = category
@@ -34,7 +31,6 @@ def list_products(category: str = None, brand: str = None):
 
 @app.get("/api/onlineshop/stats/top-sellers")
 def top_sellers(limit: int = 5):
-    # Sortiert nach sales_30_days absteigend (-1)
     cursor = collection.find().sort("sales_30_days", -1).limit(limit)
     
     ergebnis_liste = []
@@ -55,7 +51,6 @@ def get_product(product_id: str):
 
 @app.post("/api/onlineshop", status_code=201)
 def create_product(product: Product):
-    # .dict() wandelt das Pydantic-Modell in ein normales Dictionary um
     result = collection.insert_one(product.dict())
     return {"id": str(result.inserted_id)}
 

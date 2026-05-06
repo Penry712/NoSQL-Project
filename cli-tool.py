@@ -42,7 +42,7 @@ def get_product():
     productID = input("Produkt-ID eingeben: ")
     produkt = mache_request("GET", f"/{productID}")
     if produkt:
-        print(json.dumps(produkt, indent=2))
+        print(json.dumps(produkt, indent=2, ensure_ascii=False))
 
 def create_product():
     neues_produkt = {}
@@ -118,7 +118,6 @@ def top_sellers():
             platz += 1
 
 def menu():
-    # Klassisches Anfänger-Menü mit while-Schleife und if/elif
     while True:
         print("\n=== OnlineShop CLI ===")
         print("1) Alle Produkte auflisten")
