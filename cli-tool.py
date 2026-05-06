@@ -88,7 +88,7 @@ def list_reviews():
     if not reviews:
         print("Keine Reviews vorhanden.")
         return
-    print(f"\n{len(reviews)} Review(s) fuer '{p['name']}':")
+    print(f"\n{len(reviews)} Review(s) fuer '{product['name']}':")
     for r in reviews:
         stars = "*" * r["rating"] + "-" * (5 - r["rating"])
         print(f"  [{stars}] {r['user']}: {r['comment']}")
